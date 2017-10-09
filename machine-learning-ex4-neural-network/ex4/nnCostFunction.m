@@ -62,22 +62,40 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
+a1 = [ones(m, 1) X];
+Y = zeros(m, num_labels);
+for i = 1:m
+	Y(i, y(i)) = 1;
+end
 
+Theta1ExBias = Theta1(:, 2:input_layer_size+1);
+Theta2ExBias = Theta2(:, 2:hidden_layer_size+1);
 
+a2 = sigmoid(a1 * Theta1');
+a2 = [ones(m, 1) a2];
+a3 = sigmoid(a2 * Theta2');
 
+J = -1 / m * sum(sum(log(1 - abs(Y - a3)))) + lambda / (2 * m) * (sum(sum(Theta1ExBias .^ 2)) + sum(sum(Theta2ExBias .^ 2)));
 
+for t = 1:m
+	a1t = a1(t, :);
+	z2t = a1t * Theta1';
+	a2t = [1 sigmoid(z2t)];
+	z3t = a2t * Theta2';
+	a3t = sigmoid(z3t);
 
+	delta3 = a3t - Y(t, :);
+	delta2 = delta3 * Theta2 .* [1 sigmoidGradient(z2t)];	
+	delta2 = delta2(2:end);
+	%delta1 = delta2 * Theta1 .* sigmoidGradient(a1);
+	%delta1 = delta1(2:end);
 
+	Theta1_grad = Theta1_grad + delta2' * a1t;
+	Theta2_grad = Theta2_grad + delta3' * a2t;
+end
 
-
-
-
-
-
-
-
-
-
+Theta1_grad = Theta1_grad / m + [zeros(hidden_layer_size, 1) lambda / m * Theta1ExBias];
+Theta2_grad = Theta2_grad / m + [zeros(num_labels, 1) lambda / m * Theta2ExBias];
 
 
 % -------------------------------------------------------------
