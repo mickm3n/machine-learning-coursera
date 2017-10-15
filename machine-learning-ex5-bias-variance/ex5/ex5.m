@@ -218,3 +218,14 @@ end
 
 fprintf('Program paused. Press enter to continue.\n');
 pause;
+
+%% Use best lambda value to compute error on test set
+[minErrorVal, idx] = min(error_val);
+lambda = lambda_vec(idx);
+
+theta = trainLinearReg(X_poly, y, lambda);
+testError = linearRegCostFunction(X_poly_test, ytest, theta, 0);
+
+fprintf('test error = %f\n', testError)
+
+
