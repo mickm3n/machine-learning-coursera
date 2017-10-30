@@ -26,12 +26,13 @@ centroids = zeros(K, n);
 % Note: You can use a for-loop over the centroids to compute this.
 %
 
+idx_matrix = zeros(m, K);
+centroids_counts = sum(idx == 1:K);
+for i = 1:m
+	idx_matrix(i, idx(i)) = 1 / centroids_counts(idx(i));
+end
 
-
-
-
-
-
+centroids = idx_matrix' * X;
 
 % =============================================================
 
